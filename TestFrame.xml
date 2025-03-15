@@ -1,0 +1,173 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Button name="LavenderTestItemButtonTemplate" inherits="ItemButtonTemplate" virtual="true">
+		
+	</Button>
+
+	<Button name="LavenderTestItemButtonGenericTemplate" inherits="LavenderTestItemButtonTemplate" virtual="true">
+
+	</Button>
+
+
+
+	<Frame name="LavenderTestFrame" toplevel="true" movable="true" enableMouse="true" hidden="true" parent="UIParent">
+		<Size>
+			<AbsDimension x="384" y="512"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-104"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<HitRectInsets>
+			<AbsInset left="0" right="30" top="0" bottom="70"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="BankPortraitTexture">
+					<Size>
+						<AbsDimension x="60" y="60"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+                                <AbsDimension x="7" y="-6"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture file="Interface\BankFrame\UI-BankFrame">
+					<Size>
+						<AbsDimension x="512" y="512"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<FontString name="LavenderTestFrameTitleText" inherits="GameFontHighlight">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="6" y="233"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontNormal" text="Billy">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="-11" y="195"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontNormal" text="BAGSLOTTEXT">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="-11" y="-5"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="LavenderTestCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="LavenderTestFrame" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-46" y="-24"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+
+			<Frame name="LavenderTestFramePurchaseInfo" hidden="false">
+				<Size>
+					<AbsDimension x="300" y="72"/>
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="LavenderTestFrame" relativePoint="CENTER">
+						<Offset>
+							<AbsDimension x="-15" y="-105"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString inherits="GameFontHighlight" text="LavenderTestSLOTPURCHASE_LABEL" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="280" y="0"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="10" y="20"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="LavenderTestFrameSlotCost" inherits="GameFontNormal" text="COSTS_LABEL">
+							<Size>
+								<AbsDimension x="0" y="12"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="LEFT">
+									<Offset>
+										<AbsDimension x="30" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="LavenderTestFramePurchaseButton" inherits="UIPanelButtonTemplate" virtual="true" text="BANKSLOTPURCHASE">
+						<Size>
+							<AbsDimension x="124" y="21"/>
+						</Size>
+						<Anchors>
+							<Anchor point="RIGHT" relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="-20" y="-10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								PlaySound("igMainMenuOption");
+								StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame name="LavenderTestFrameDetailMoneyFrame" inherits="SmallMoneyFrameTemplate" hidden="false">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="LavenderTestFrameSlotCost" relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="10" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="LavenderTestFrameMoneyFrame" inherits="SmallMoneyFrameTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-38" y="102"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

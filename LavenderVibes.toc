@@ -1,0 +1,17 @@
+## Interface: 11200
+## Title: |cffa335eeLavender Vibes|r
+## Notes: Feel the vibes.
+## Author: Knoxy
+## SavedVariables: LavenderOptions, LavenderInventory
+
+LavenderCore.lua
+LavenderUtil.lua
+LavenderConfig.lua
+
+Modules\ItemInventory.lua
+Modules\MinimapButton.lua
+Modules\MinimapClock.lua
+Modules\Panel.lua
+Modules\Panel\Bags.lua
+Modules\Panel\Money.lua
+Modules\Tradeskills.lua

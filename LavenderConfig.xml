@@ -1,0 +1,80 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Frame name="LavenderSettingsFrame" parent="UIParent" toplevel="true" frameStrata="DIALOG">
+        <Size>
+            <AbsDimension x="300" y="200"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\\DialogFrame\\UI-DialogBox-Background" edgeFile="Interface\\DialogFrame\\UI-DialogBox-Border" edgeSize="32">
+            <BackgroundInsets>
+                <AbsInset left="11" right="12" top="12" bottom="11"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <TitleRegion>
+            <Size>
+                <AbsDimension x="300" y="24"/>
+            </Size>
+            <Anchors>
+                <Anchor point="TOP"/>
+            </Anchors>
+        </TitleRegion>
+
+        <FontString name="LavenderSettingsFrameTitle" inherits="GameFontNormalLarge" text="Lavender Vibes Titts">
+            <Anchors>
+                <Anchor point="TOP" relativePoint="TOP" y="-10"/>
+            </Anchors>
+        </FontString>
+
+        <!-- Checkbox -->
+        <CheckButton name="LavenderSettingsFrameCheckbox" inherits="OptionsCheckButtonTemplate">
+            <Size x="26" y="26"/>
+            <Anchors>
+                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-40"/>
+            </Anchors>
+            <Scripts>
+                <OnClick>
+                    MyAddonSettings.CheckboxValue = LavenderSettingsFrameCheckbox:GetChecked()
+                </OnClick>
+            </Scripts>
+            <FontString inherits="GameFontNormal" text="Enable Feature">
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </FontString>
+        </CheckButton>
+
+        <!-- Slider -->
+        <Slider name="LavenderSettingsFrameSlider" minValue="0" maxValue="100" valueStep="1" orientation="HORIZONTAL">
+            <Size>
+                <AbsDimension x="200" y="16"/>
+            </Size>
+            <Anchors>
+                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-80"/>
+            </Anchors>
+            <Scripts>
+                <OnValueChanged>
+                    MyAddonSettings.SliderValue = LavenderSettingsFrameSlider:GetValue()
+                </OnValueChanged>
+            </Scripts>
+            <Backdrop bgFile="Interface\\Buttons\\UI-SliderBar-Background"/>
+            <ThumbTexture file="Interface\\Buttons\\UI-SliderBar-Button-Horizontal"/>
+        </Slider>
+
+        <!-- Save Button -->
+        <Button name="LavenderSettingsFrameSaveButton" inherits="UIPanelButtonTemplate" text="Save">
+            <Size>
+                <AbsDimension x="80" y="22"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOM" relativePoint="BOTTOM" y="20"/>
+            </Anchors>
+            <Scripts>
+                <OnClick>
+                    MyAddon_SaveSettings()
+                    MyAddonSettingsFrame:Hide()
+                </OnClick>
+            </Scripts>
+        </Button>
+    </Frame>
+</Ui>
