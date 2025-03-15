@@ -22,4 +22,4 @@ Show info panel at the top of the screen for quickly viewing bag space, money, e
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/kn0xy/LavenderVibes/releases).
 2. Extract the contents to your World of Warcraft `Interface/AddOns` directory.
-3. Open World of Warcraft and enable the LavenderVibes addon from the addons menu.
+3. Open World of Warcraft 1.12.1 and enable the LavenderVibes addon from the addons menu.
