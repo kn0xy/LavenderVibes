@@ -6,12 +6,15 @@ A modular multi-purpose utility addon for the World of Warcraft 1.12.1 client.
 - **Account-wide Item Inventory Tracking**:
 View and search inventory items (including bank) across all your characters.
 <br>
+
 - **Account-wide Tradeskill Tracking**:
 View and search learned skills and required materials for all known professions across all of your characters.
 <br>
+
 - **Minimap Clock/Timer**:
 Multipurpose clock/timer added below the minimap similar to later versions of WoW.
 <br>
+
 - **Top Info Panel**: Show info panel at the top of the screen for quickly viewing bag space, money, etc. similar to Titan Panel.
 
 <br>
