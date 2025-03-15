@@ -21,7 +21,7 @@ Show info panel at the top of the screen for quickly viewing bag space, money, e
 
 ## Installation
 1. Download the latest release from the [releases page](https://github.com/kn0xy/LavenderVibes/releases).
-2. Extract the contents to your World of Warcraft `Interface/AddOns` directory.
+2. Extract the contents to your World of Warcraft 1.12.1 `Interface/AddOns` directory.
 3. Open World of Warcraft 1.12.1 and enable the LavenderVibes addon from the addons menu.
 
 <br>
@@ -32,8 +32,8 @@ Show info panel at the top of the screen for quickly viewing bag space, money, e
 
 | Date       | Old  | New  | Module      | Description                        |
 |------------|------|------|-------------|------------------------------------|
+| 12/14/2024 | 0.1.0| 0.1.1| Inventory   | Added "Sort By" dropdown           |
 | 12/15/2024 | 0.1.1| 0.1.2| Inventory   | Added "Last Updated" text          |
 |            |      |      | Config      | Added tooltips to submenu options  |
-| 12/14/2024 | 0.1.0| 0.1.1| Inventory   | Added "Sort By" dropdown           |
 | 12/31/2024 | 0.1.1| 0.2.0| Tradeskills | Beta implementation                |
 | 02/02/2025 | 0.2.0| 0.2.1| Top Panel   | Added Money widget                 |
