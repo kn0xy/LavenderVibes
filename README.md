@@ -1,6 +1,6 @@
 # Lavender Vibes
 
-A modular multi-purpose utility addon for the World of Warcraft 1.12.1 client.
+A modular, minimalist, multi-purpose utility addon for the World of Warcraft 1.12.1 client.
 
 ## Modules
 - **Account-wide Item Inventory Tracking**:<br>
