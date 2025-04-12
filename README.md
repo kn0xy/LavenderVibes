@@ -17,6 +17,11 @@ Multipurpose clock/timer added below the minimap similar to later versions of Wo
 - **Top Info Panel**:<br>
 Show info panel at the top of the screen for quickly viewing bag space, money, etc. similar to Titan Panel.
 
+- **Party Bots**:<br>
+Easily control party bots by clicking instead of manually targeting and typing commands.
+
+
+
 <br>
 
 ## Installation
@@ -27,8 +32,8 @@ Show info panel at the top of the screen for quickly viewing bag space, money, e
 <br>
 
 ## Changelog
-**Latest Version**: 0.2.1  
-**Last Updated**: 2/2/2025
+**Latest Version**: 0.3.2  
+**Last Updated**: 4/12/2025
 
 | Date       | Old  | New  | Module      | Description                        |
 |------------|------|------|-------------|------------------------------------|
@@ -37,3 +42,7 @@ Show info panel at the top of the screen for quickly viewing bag space, money, e
 |            |      |      | Config      | Added tooltips to submenu options  |
 | 12/31/2024 | 0.1.1| 0.2.0| Tradeskills | Beta implementation                |
 | 02/02/2025 | 0.2.0| 0.2.1| Top Panel   | Added Money widget                 |
+| 04/10/2025 | 0.2.1| 0.3.0| PartyBots   | Added PartyBots module             |
+| 04/11/2025 | 0.3.0| 0.3.1| Core        | Improved session persistence       |
+|            |      |      | PartyBots   | Added stay/unstay controls         |
+| 04/12/2025 | 0.3.1| 0.3.2| PartyBots   | Added pause/unpause all button     |

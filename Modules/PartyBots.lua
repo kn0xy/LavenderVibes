@@ -7,18 +7,10 @@ local function lvPartyBots()
         Bots = {},
         LastPausedTime = {},
         Encounters = {},
-        IsFirstLogin = true
-    }
-
-    -- Initialize baron button option
-    if LavenderOptions._PartyBotsShowBaronButton == nil then
-        LavenderOptions._PartyBotsShowBaronButton = false
-    end
-
-    -- Initialize login tracking
-    if LavenderOptions._PartyBotsLastSession == nil then
-        LavenderOptions._PartyBotsLastSession = 0
-    end
+        IsFirstLogin = true,
+        AttachedButtons = {},
+        AllPaused = false
+    }    
 
     -- Initialize the main menu
     local function initializeMenu(level)
@@ -26,66 +18,16 @@ local function lvPartyBots()
         
         local menuItems = {
             {
-                text = "Bot Controls",
+                text = "Actions",
                 hasArrow = true,
-                value = "BOT_CONTROLS",
+                value = "ACTIONS",
                 menuList = {
-                    {
-                        isTitle = true,
-                        text = "Bot Controls", 
-                        notCheckable = true,
-                    },
-                    {
-                        text = "Pause All",
-                        notCheckable = true,
-                        func = function()                           
-                            partyBots:PauseAllBots()
-                        end
-                    }
-                }
-            },
-            {
-                text = "Encounters",
-                hasArrow = true,
-                value = "ENCOUNTERS",
-                menuList = {
-                    {
-                        isTitle = true,
-                        text = "Encounters", 
-                        notCheckable = true,
-                    },
-                    {
-                        text = "Show Baron Button",
-                        keepShownOnClick = false,
-                        checked = LavenderOptions._PartyBotsShowBaronButton,
-                        func = function()
-                            if not this.checked then
-                                LavenderOptions._PartyBotsShowBaronButton = true
-                                partyBots.baronButton:Show()
-                            else
-                                LavenderOptions._PartyBotsShowBaronButton = false
-                                partyBots.baronButton:Hide() 
-                            end
-                            CloseDropDownMenus()
-                        end
-                    }
-                }
-            },
-            {
-                text = "Window Options",
-                hasArrow = true,
-                value = "WINDOW_OPTIONS",
-                menuList = {
-                    {
-                        isTitle = true,
-                        text = "Window Options", 
-                        notCheckable = true,
-                    },
                     {
                         text = "Register Party",
                         notCheckable = true,
                         func = function()
                             partyBots:QuickLoad()
+                            CloseDropDownMenus()
                         end
                     },
                     {
@@ -95,11 +37,59 @@ local function lvPartyBots()
                             for botName, _ in pairs(partyBots.Bots) do
                                 partyBots:UnregisterBot(botName)
                             end
+                            CloseDropDownMenus()
                         end
-                    },  
-                    
+                    }
                 }
-            }
+            },
+            {
+                text = "Options",
+                hasArrow = true,
+                value = "WINDOW_OPTIONS",
+                menuList = {
+                    -- {
+                    --     isTitle = true,
+                    --     text = "Window Options", 
+                    --     notCheckable = true,
+                    -- },
+                    {
+                        text = "Show Baron Button",
+                        keepShownOnClick = true,
+                        checked = LavenderOptions._PartyBotsShowBaronButton,
+                        func = function()
+                            if not this.checked then
+                                LavenderOptions._PartyBotsShowBaronButton = true
+                                partyBots.baronButton:Show()
+                            else
+                                LavenderOptions._PartyBotsShowBaronButton = false
+                                partyBots.baronButton:Hide() 
+                            end
+                        end
+                    },
+                    {
+                        text = "Show Pause All Button",
+                        keepShownOnClick = true,
+                        checked = LavenderOptions._PartyBotsShowPauseAllButton,
+                        func = function()
+                            if not this.checked then
+                                LavenderOptions._PartyBotsShowPauseAllButton = true
+                                partyBots.pauseAllButton:Show()
+                            else
+                                LavenderOptions._PartyBotsShowPauseAllButton = false
+                                partyBots.pauseAllButton:Hide() 
+                            end
+                        end
+                    }
+                }
+            },
+            
+            {
+                text = partyBots.AllPaused and "Unpause All" or "Pause All",
+                notCheckable = true,
+                func = function()                           
+                    partyBots:PauseAllBots()
+                end
+            },
         }
 
         
@@ -127,7 +117,7 @@ local function lvPartyBots()
     local function initDaddyFrame()
         local frame = CreateFrame("Button", "LavenderBotsFrame", UIParent)
         frame:SetWidth(110)
-        frame:SetHeight(80)
+        frame:SetHeight(55)
         -- Set initial position, either from saved options or default center
         if LavenderOptions._PartyBotsFramePos then
             frame:SetPoint(LavenderOptions._PartyBotsFramePos.point, UIParent, 
@@ -177,7 +167,7 @@ local function lvPartyBots()
         header:SetScript("OnClick", function()
             if arg1 == "RightButton" then
                 UIDropDownMenu_Initialize(contextMenu, initializeMenu, "MENU")
-                ToggleDropDownMenu(1, nil, contextMenu, "cursor", 0, 70)
+                ToggleDropDownMenu(1, nil, contextMenu, "cursor", 0, 85)
             end
         end)
         
@@ -203,7 +193,6 @@ local function lvPartyBots()
         frame.closeButton:SetScript("OnClick", function()
             PlaySound("igMainMenuClose")
             frame:Hide()
-            LavenderOptions._PartyBotsFrameShown = false
         end)
 
         -- Track frame visibility changes
@@ -223,15 +212,14 @@ local function lvPartyBots()
     end
 
 
+    -- Create Baron button
     local function initBaronButton()
-        -- Create Baron button
         local frame = partyBots.Frame
-        partyBots.baronButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-        partyBots.baronButton:SetWidth(100)
-        partyBots.baronButton:SetHeight(20)
-        partyBots.baronButton:SetPoint("TOP", frame, "BOTTOM", 0, -5)
-        partyBots.baronButton:SetText("Get Out!")
-        partyBots.baronButton:SetScript("OnClick", function()
+        local btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        btn:SetWidth(100)
+        btn:SetHeight(20)
+        btn:SetText("Get Out!")
+        btn:SetScript("OnClick", function()
             partyBots:targetPlayerByName("Catatonic")
             lv.Throttle.Add(".partybot pause", "SAY")
             lv.Throttle.Add(".partybot cometome", "SAY")
@@ -241,17 +229,90 @@ local function lvPartyBots()
                 lv.Throttle.Add(".partybot cometome", "SAY")
             end)
         end)
-        if not LavenderOptions._PartyBotsShowBaronButton then
-            partyBots.baronButton:Hide()
+
+        if LavenderOptions._PartyBotsShowBaronButton == nil then
+            LavenderOptions._PartyBotsShowBaronButton = false
         end
+
+        if not LavenderOptions._PartyBotsShowBaronButton then
+            btn:Hide()
+        else
+            partyBots:attachButton(btn)
+        end
+
+        -- Set show/hide scripts to manage attachment
+        btn:SetScript("OnShow", function()
+            partyBots:attachButton(btn)
+        end)
+        btn:SetScript("OnHide", function()
+            partyBots:detachButton(btn)
+        end)
+
+        partyBots.baronButton = btn
     end
 
+    local function initPauseAllButton()
+        -- Create Pause All button
+        local frame = partyBots.Frame
+        local btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        btn:SetWidth(100)
+        btn:SetHeight(20)
+        btn:SetText(partyBots.AllPaused and "Unpause All" or "Pause All")
+        btn:SetScript("OnClick", function()
+            partyBots:PauseAllBots()
+        end)
 
-    
+        if not LavenderOptions._PartyBotsShowPauseAllButton then
+            btn:Hide()
+        else
+            partyBots:attachButton(btn)
+        end
+
+        -- Set show/hide scripts to manage attachment
+        btn:SetScript("OnShow", function() partyBots:attachButton(btn) end)
+        btn:SetScript("OnHide", function() partyBots:detachButton(btn) end)
+
+        partyBots.pauseAllButton = btn
+    end
 
     -- Initialize encounters
     local function initEncounters()
         initBaronButton()
+        initPauseAllButton()
+    end
+
+    -- Function to add button to attached buttons
+    function partyBots.attachButton(self, button)
+        if self and not button then button = self end
+        table.insert(partyBots.AttachedButtons, button)
+        partyBots:updateButtonPositions()
+    end
+
+    -- Function to remove button from attached buttons
+    function partyBots.detachButton(self, button)
+        if self and not button then button = self end
+        for i, attachedButton in ipairs(partyBots.AttachedButtons) do
+            if attachedButton == button then
+                table.remove(partyBots.AttachedButtons, i)
+                break
+            end
+        end
+        partyBots:updateButtonPositions()
+    end
+
+    -- Function to update button positions
+    function partyBots.updateButtonPositions()
+        local lastButton = nil
+        for _, button in ipairs(partyBots.AttachedButtons) do
+            if button:IsShown() then
+                if lastButton then
+                    button:SetPoint("TOP", lastButton, "BOTTOM", 0, -5)
+                else
+                    button:SetPoint("TOP", partyBots.Frame, "BOTTOM", 0, -2)
+                end
+                lastButton = button
+            end
+        end
     end
 
     -- Function to target a specific player by name
@@ -330,7 +391,9 @@ local function lvPartyBots()
             texture:SetTexCoord(unpack(marker.coord))
             texture:SetAllPoints(true)
             texture:SetAlpha(0.8)
-    
+            
+            --button:EnableMouse(true)
+            button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
             button:SetScript("OnClick", function()
                 if arg1 == "LeftButton" then
                     -- Set Focus marker
@@ -380,35 +443,54 @@ local function lvPartyBots()
         chatEventFrame:SetScript("OnEvent", function()
             local message = arg1
             if not message then return end
+
+            -- Check for pause all messages
+            local pattern = "all party bots paused"
+            if string.find(string.lower(message), string.lower(pattern)) then
+                -- all bots were paused
+                for botName, _ in pairs(partyBots.Bots) do
+                    partyBots.LastPausedTime[botName] = GetTime()
+                end
+                partyBots:updatePauseAllButton()
+                return
+            end
+
+            pattern = "all party bots unpaused"
+            if string.find(string.lower(message), string.lower(pattern)) then
+                -- all bots were unpaused
+                partyBots.LastPausedTime = {}
+                partyBots:updatePauseAllButton()
+                return
+            end
             
             for botName, _ in pairs(partyBots.Bots) do
                 -- Check for pause messages
-                local pattern = botName .. " paused"
+                pattern = botName .. " paused"
                 if string.find(string.lower(message), string.lower(pattern)) then
                     -- bot was paused
                     partyBots.LastPausedTime[botName] = GetTime()
-                    break
+                    return
                 else
                     pattern = botName .. " unpaused"
                     if string.find(string.lower(message), string.lower(pattern)) then
                         -- bot was unpaused
                         partyBots.LastPausedTime[botName] = nil
-                        break
+                        return
                     end
                 end
 
                 -- Check for stay messages
-                local pattern = botName .. " will stay in position"
+                pattern = botName .. " will stay in position"
                 if string.find(string.lower(message), string.lower(pattern)) then
                     -- bot will stay in position
                     partyBots.Bots[botName].staying = true
-                    break
+                    return
                 else
                     pattern = botName .. " is free to move"
                     if string.find(string.lower(message), string.lower(pattern)) then
                         -- bot is free to move
                         partyBots.Bots[botName].staying = false
-                        break
+                        return
                     end
                 end
                 
@@ -439,6 +521,7 @@ local function lvPartyBots()
         targetOpFrame.elapsed = 0
         targetOpFrame.targetToRestore = nil
         targetOpFrame.shouldClear = false
+        targetOpFrame.callback = nil
         targetOpFrame:SetScript("OnUpdate", function()
             targetOpFrame.elapsed = targetOpFrame.elapsed + arg1
             if targetOpFrame.elapsed >= 0.15 then
@@ -448,9 +531,14 @@ local function lvPartyBots()
                     ClearTarget()
                 end
                 targetOpFrame:Hide()
-                targetOpFrame.elapsed = 0
-                targetOpFrame.targetToRestore = nil
-                targetOpFrame.shouldClear = false
+            end
+        end)
+        targetOpFrame:SetScript("OnHide", function()
+            targetOpFrame.elapsed = 0
+            targetOpFrame.targetToRestore = nil
+            targetOpFrame.shouldClear = false
+            if targetOpFrame.callback ~= nil then
+                targetOpFrame.callback()
             end
         end)
         partyBots.targetOpFrame = targetOpFrame
@@ -493,7 +581,7 @@ local function lvPartyBots()
         local frameSize = 35 -- 30px frame + 5px spacing
         local framesPerRow = 5
         local numBots = table.getn(botNames)
-        local minWidth = 110
+        local minWidth = 115
         local maxWidth = framesPerRow * frameSize + 10 -- 10px padding
         local requiredWidth = math.max(minWidth, math.min(maxWidth, math.min(numBots, framesPerRow) * frameSize + 10))
         
@@ -543,6 +631,29 @@ local function lvPartyBots()
             nameText:SetPoint("CENTER", botFrame, "CENTER", 0, 0)
             local shortName = string.sub(name, 1, 4)
             nameText:SetText(lv.Util.ColorTextByClass(shortName, class))
+            
+            -- Function to update tooltip
+            local function updateTooltip()
+                GameTooltip:Hide()
+                GameTooltip:SetOwner(botFrame, "ANCHOR_RIGHT")
+                GameTooltip:ClearLines()
+                GameTooltip:AddLine(lv.Util.ColorTextByClass(name, class), 1, 1, 1)
+                if partyBots.checkPaused(name) then
+                    GameTooltip:AddLine("Paused", 1, 0, 0)
+                else
+                    GameTooltip:AddLine("Active", 0, 1, 0)
+                end
+                if partyBots.checkStaying(name) then
+                    GameTooltip:AddLine("Staying", 1, 0, 0)
+                end
+                GameTooltip:Show()
+            end
+            
+            -- Add tooltip
+            botFrame:SetScript("OnEnter", updateTooltip)
+            botFrame:SetScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
             
             -- Add click handler
             botFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp")
@@ -600,6 +711,13 @@ local function lvPartyBots()
                     partyBots.targetOpFrame.shouldClear = true
                 end
                 if(arg1 == "MiddleButton") then return end
+
+                -- Update tooltip if it's showing
+                lv.Util.SetTimeout(0.25, function()
+                    if GameTooltip:IsOwned(botFrame) then updateTooltip() end
+                end)
+                
+
                 partyBots.targetOpFrame.elapsed = 0
                 partyBots.targetOpFrame:Show()
             end)
@@ -632,6 +750,16 @@ local function lvPartyBots()
         
         -- Update all frames based on current view
         partyBots:updateBotFrames()
+    end
+
+
+    function partyBots.PauseAllBots()
+        if partyBots.AllPaused then
+            SendChatMessage(".partybot unpause all", "SAY")
+        else
+            SendChatMessage(".partybot pause all", "SAY")
+        end
+
     end
 
     
@@ -820,7 +948,7 @@ local function lvPartyBots()
             ClearTarget()
 
             -- Send pause command
-            SendChatMessage(".partybot pause", "SAY")
+            SendChatMessage(".partybot pause all", "SAY")
 
             -- Restore previous target after delay
             if hadTarget and previousTarget then
@@ -903,6 +1031,27 @@ local function lvPartyBots()
             self:UnregisterBot(botName)
         end
         LavenderPrint("Cleared all registered bots")
+    end
+
+    -- Check if all bots are paused
+    partyBots.toggleAllPaused = function()
+        if partyBots.AllPaused then
+            return false
+        else
+            return true
+        end
+    end
+
+    -- Update pause all button text
+    partyBots.updatePauseAllButton = function()
+        if not partyBots.pauseAllButton then return end
+        if partyBots.AllPaused then
+            partyBots.pauseAllButton:SetText("Pause All")
+            partyBots.AllPaused = false
+        else
+            partyBots.pauseAllButton:SetText("Unpause All")
+            partyBots.AllPaused = true
+        end
     end
 
     -- Initialize module
