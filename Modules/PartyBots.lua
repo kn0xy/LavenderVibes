@@ -64,9 +64,7 @@ local function lvPartyBots()
                         keepShownOnClick = false,
                         checked = LavenderOptions._PartyBotsShowBaronButton,
                         func = function()
-                            local checked = this.checked
-                            
-                            if not checked then
+                            if not this.checked then
                                 LavenderOptions._PartyBotsShowBaronButton = true
                                 partyBots.baronButton:Show()
                             else
@@ -105,7 +103,15 @@ local function lvPartyBots()
         local frame = CreateFrame("Button", "LavenderBotsFrame", UIParent)
         frame:SetWidth(116)
         frame:SetHeight(80)
-        frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        -- Set initial position, either from saved options or default center
+        if LavenderOptions._PartyBotsFramePos then
+            frame:SetPoint(LavenderOptions._PartyBotsFramePos.point, UIParent, 
+                LavenderOptions._PartyBotsFramePos.relativePoint, 
+                LavenderOptions._PartyBotsFramePos.xOfs, 
+                LavenderOptions._PartyBotsFramePos.yOfs)
+        else
+            frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        end
         frame:SetMovable(true)
         frame:EnableMouse(true)
         frame:SetScript("OnClick", function(self, arg1)
@@ -131,7 +137,17 @@ local function lvPartyBots()
         header:EnableMouse(true)
         header:RegisterForDrag("LeftButton")
         header:SetScript("OnDragStart", function() frame:StartMoving() end)
-        header:SetScript("OnDragStop", function() frame:StopMovingOrSizing() end)
+        header:SetScript("OnDragStop", function() 
+            frame:StopMovingOrSizing()
+            -- Store frame position in LavenderOptions
+            local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
+            LavenderOptions._PartyBotsFramePos = {
+                point = point,
+                relativePoint = relativePoint,
+                xOfs = xOfs,
+                yOfs = yOfs
+            }
+        end)
         header:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         header:SetScript("OnClick", function()
             if arg1 == "RightButton" then
@@ -162,57 +178,21 @@ local function lvPartyBots()
         frame.closeButton:SetScript("OnClick", function()
             PlaySound("igMainMenuClose")
             frame:Hide()
+            LavenderOptions._PartyBotsFrameShown = false
         end)
 
-        --[[
-        -- Create pause all button
-        local baronButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-        baronButton:SetWidth(100)
-        baronButton:SetHeight(20)
-        baronButton:SetPoint("TOP", frame, "BOTTOM", 0, -5)
-        baronButton:SetText("Pause All")
-        baronButton:SetScript("OnClick", function()
-        --     -- Save current target
-        --     local hadTarget = UnitExists("target")
-        --     local previousTarget = nil
-        --     if hadTarget then
-        --         previousTarget = UnitName("target")
-        --     end
-
-        --     -- Clear target before sending commands
-        --     ClearTarget()
-
-        --     -- Send pause command to all bots in party
-        --     for i = 1, GetNumPartyMembers() do
-        --         local name = UnitName("party"..i)
-        --         if name and partyBots.Bots[name] then
-                    
-        --         end
-        --     end
-
-        --     -- Restore previous target after delay
-        --     if hadTarget and previousTarget then
-        --         partyBots.targetOpFrame.targetToRestore = previousTarget
-        --         partyBots.targetOpFrame:Show()
-        --     end
-
-
-            partyBots:targetPlayerByName("Catatonic")
-            lv.Throttle.Add(".partybot pause", "SAY")
-            lv.Throttle.Add(".partybot cometome", "SAY")
-            LavenderVibes.Util.SetTimeout(0.35, function()
-                partyBots:targetPlayerByName("Moonkorius")
-                lv.Throttle.Add(".partybot pause", "SAY")
-                lv.Throttle.Add(".partybot cometome", "SAY")
-            end)
-
-
+        -- Track frame visibility changes
+        frame:SetScript("OnHide", function()
+            LavenderOptions._PartyBotsFrameShown = false
         end)
-        --]]
+        frame:SetScript("OnShow", function()
+            LavenderOptions._PartyBotsFrameShown = true
+        end)
         
+        if not LavenderOptions._PartyBotsFrameShown then
+            frame:Hide()
+        end
         
-        -- Hidden by default
-        frame:Hide()
         return frame
     end
 
@@ -651,12 +631,21 @@ local function lvPartyBots()
     -- Function to show the frame
     partyBots.Show = function(self)
         self.Frame:Show()
+        LavenderOptions._PartyBotsFrameShown = true
+    end
+
+    -- Function to hide the frame
+    partyBots.Hide = function(self)
+        self.Frame:Hide()
+        LavenderOptions._PartyBotsFrameShown = false
     end
 
     -- Quick load
     partyBots.QuickLoad = function(self)
-        -- Show the window
-        self:Show()
+        -- Show the window if it was previously shown
+        if LavenderOptions._PartyBotsFrameShown then
+            self:Show()
+        end
             
         -- Register all party members as bots
         for i = 1, GetNumPartyMembers() do
