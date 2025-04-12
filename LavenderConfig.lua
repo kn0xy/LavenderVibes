@@ -1,5 +1,3 @@
-
-
 -- Define options to show in the config window
 local LavenderConfigOptions = {
 	["MinimapButton"] = "Minimap Button",
@@ -207,6 +205,17 @@ function LavenderVibes.Config:ShowDetails(selected)
 	local frame = LavenderVibes.Config
 	local btns = frame.DetailsButtons
 	
+	-- Hide any previously shown details first
+	if frame.Details:IsShown() then
+		-- Hide any existing details frame
+		for _, child in ipairs({frame.Details:GetChildren()}) do
+			if child:IsShown() then
+				child:Hide()
+				child:SetParent(nil)  -- Remove parent relationship
+			end
+		end
+	end
+	
 	for b,btn in ipairs(btns) do
 		if(btn:GetName() ~= selected) then
 			btn:Disable()
@@ -225,11 +234,15 @@ function LavenderVibes.Config:ShowDetails(selected)
 	
 	local bill = LavenderVibes.Modules[selected].ConfigDetails
 	if bill ~= nil then
+		-- Ensure bill is not parented to anything else
+		if bill:GetParent() then
+			bill:SetParent(nil)
+		end
+		
 		bill:SetPoint("TOPLEFT", frame.Details, "TOPLEFT", 5, -5)
 		bill:SetParent(frame.Details)
 		bill:SetWidth(frame.Details:GetWidth() - 10)
 		bill:SetHeight(frame.Details:GetHeight() - 10)
-		
 		bill:SetFrameStrata("Dialog")
 		bill:Show()
 	else

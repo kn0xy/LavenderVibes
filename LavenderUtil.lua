@@ -24,7 +24,7 @@ end
 
 -- Utility: Color text by class
 util.ColorTextByClass = function(txt, class)
-	local classColor;
+	local classColor = "|r";
 	if(class == "Death Knight") then
 		classColor = "|cffc41e3a";
 	elseif(class == "Demon Hunter") then
@@ -135,6 +135,13 @@ util.PrintTable = function(tbl, indent)
             DEFAULT_CHAT_FRAME:AddMessage(prefix .. tostring(key) .. ": " .. tostring(value))
         end
     end
+end
+
+
+-- Utility: Capitalize first letter of a string
+util.UCFirst = function(str)
+    if not str or str == "" then return str end
+    return string.upper(string.sub(str, 1, 1)) .. string.lower(string.sub(str, 2))
 end
 
 
