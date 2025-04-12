@@ -62,34 +62,16 @@ local function lvPartyBots()
                     {
                         text = "Show Baron Button",
                         keepShownOnClick = false,
-                        checked = LavenderOptions._PartyBotsShowBaronButton or false,
+                        checked = LavenderOptions._PartyBotsShowBaronButton,
                         func = function()
                             local checked = this.checked
-                            LavenderOptions._PartyBotsShowBaronButton = checked
-                            if checked then
-                                if not partyBots.baronButton then
-                                    -- Create pause all button
-                                    partyBots.baronButton = CreateFrame("Button", nil, partyBots.Frame, "UIPanelButtonTemplate")
-                                    partyBots.baronButton:SetWidth(100)
-                                    partyBots.baronButton:SetHeight(20)
-                                    partyBots.baronButton:SetPoint("TOP", partyBots.Frame, "BOTTOM", 0, -5)
-                                    partyBots.baronButton:SetText("Get Out!")
-                                    partyBots.baronButton:SetScript("OnClick", function()
-                                        partyBots:targetPlayerByName("Catatonic")
-                                        lv.Throttle.Add(".partybot pause", "SAY")
-                                        lv.Throttle.Add(".partybot cometome", "SAY")
-                                        LavenderVibes.Util.SetTimeout(0.35, function()
-                                            partyBots:targetPlayerByName("Moonkorius")
-                                            lv.Throttle.Add(".partybot pause", "SAY")
-                                            lv.Throttle.Add(".partybot cometome", "SAY")
-                                        end)
-                                    end)
-                                end
+                            
+                            if not checked then
+                                LavenderOptions._PartyBotsShowBaronButton = true
                                 partyBots.baronButton:Show()
                             else
-                                if partyBots.baronButton then
-                                    partyBots.baronButton:Hide()
-                                end
+                                LavenderOptions._PartyBotsShowBaronButton = false
+                                partyBots.baronButton:Hide() 
                             end
                         end
                     }
@@ -235,13 +217,33 @@ local function lvPartyBots()
     end
 
 
+    local function initBaronButton()
+        -- Create Baron button
+        local frame = partyBots.Frame
+        partyBots.baronButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        partyBots.baronButton:SetWidth(100)
+        partyBots.baronButton:SetHeight(20)
+        partyBots.baronButton:SetPoint("TOP", frame, "BOTTOM", 0, -5)
+        partyBots.baronButton:SetText("Get Out!")
+        partyBots.baronButton:SetScript("OnClick", function()
+            partyBots:targetPlayerByName("Catatonic")
+            lv.Throttle.Add(".partybot pause", "SAY")
+            lv.Throttle.Add(".partybot cometome", "SAY")
+            LavenderVibes.Util.SetTimeout(0.35, function()
+                partyBots:targetPlayerByName("Moonkorius")
+                lv.Throttle.Add(".partybot pause", "SAY")
+                lv.Throttle.Add(".partybot cometome", "SAY")
+            end)
+        end)
+        partyBots.baronButton:Hide()
+    end
+
+
     
 
     -- Initialize encounters
     local function initEncounters()
-        local encounters = {
-
-        }
+        initBaronButton()
     end
 
     -- Function to target a specific player by name
@@ -848,13 +850,9 @@ local function lvPartyBots()
     partyBots.currentView = "grid"
     partyBots.registerSlashCommands()
     partyBots.MarkerMenu = CreateMarkerMenu()
-    
     initEventHandlers()
+    initEncounters()
     lv.Modules.PartyBots = partyBots
-
-    -- Remove the default center positioning
-    -- partyBots.MarkerMenu:SetPoint("CENTER", UIParent, "CENTER")
-    -- partyBots.MarkerMenu:Show()
 
     -- Hook to hide the window
     lv.Hooks.add_action("hide_all", function() 
