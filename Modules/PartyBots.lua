@@ -126,7 +126,7 @@ local function lvPartyBots()
     -- Initialize the main frame
     local function initDaddyFrame()
         local frame = CreateFrame("Button", "LavenderBotsFrame", UIParent)
-        frame:SetWidth(116)
+        frame:SetWidth(110)
         frame:SetHeight(80)
         -- Set initial position, either from saved options or default center
         if LavenderOptions._PartyBotsFramePos then
@@ -211,6 +211,7 @@ local function lvPartyBots()
             LavenderOptions._PartyBotsFrameShown = false
         end)
         frame:SetScript("OnShow", function()
+            partyBots:updateBotFrames()
             LavenderOptions._PartyBotsFrameShown = true
         end)
         
@@ -380,19 +381,37 @@ local function lvPartyBots()
             local message = arg1
             if not message then return end
             
-            -- Check for pause messages
             for botName, _ in pairs(partyBots.Bots) do
+                -- Check for pause messages
                 local pattern = botName .. " paused"
                 if string.find(string.lower(message), string.lower(pattern)) then
                     -- bot was paused
                     partyBots.LastPausedTime[botName] = GetTime()
+                    break
                 else
                     pattern = botName .. " unpaused"
                     if string.find(string.lower(message), string.lower(pattern)) then
                         -- bot was unpaused
                         partyBots.LastPausedTime[botName] = nil
+                        break
                     end
                 end
+
+                -- Check for stay messages
+                local pattern = botName .. " will stay in position"
+                if string.find(string.lower(message), string.lower(pattern)) then
+                    -- bot will stay in position
+                    partyBots.Bots[botName].staying = true
+                    break
+                else
+                    pattern = botName .. " is free to move"
+                    if string.find(string.lower(message), string.lower(pattern)) then
+                        -- bot is free to move
+                        partyBots.Bots[botName].staying = false
+                        break
+                    end
+                end
+                
             end
         end)
         partyBots.chatEventFrame = chatEventFrame
@@ -449,6 +468,12 @@ local function lvPartyBots()
         return false -- not paused
     end
 
+    function partyBots.checkStaying(self, playerName)
+        if self and not playerName then playerName = self end
+        if not playerName then return false end
+        return partyBots.Bots[playerName].staying
+    end
+
     -- Update all bot frames based on current view
     partyBots.updateBotFrames = function(self)
         if not self.Frame then return end
@@ -464,14 +489,24 @@ local function lvPartyBots()
             table.insert(botNames, botName)
         end
         
+        -- Calculate required width based on number of bots
+        local frameSize = 35 -- 30px frame + 5px spacing
+        local framesPerRow = 5
+        local numBots = table.getn(botNames)
+        local minWidth = 110
+        local maxWidth = framesPerRow * frameSize + 10 -- 10px padding
+        local requiredWidth = math.max(minWidth, math.min(maxWidth, math.min(numBots, framesPerRow) * frameSize + 10))
+        
+        -- Update frame width if needed
+        if self.Frame:GetWidth() ~= requiredWidth then
+            self.Frame:SetWidth(requiredWidth - 5)
+        end
+        
         -- Grid View Layout
         local xOffset, yOffset = 5, -5
-        local maxWidth = self.Frame:GetWidth() - 10
-        local frameSize = 35 -- 30px frame + 5px spacing
-        local framesPerRow = 3
-        
         local currentRow, currentCol = 0, 0
-        for i = 1, table.getn(botNames) do
+        
+        for i = 1, numBots do
             local botName = botNames[i]
             local botData = self.Bots[botName]
             
@@ -523,9 +558,15 @@ local function lvPartyBots()
                     if(arg1 == "LeftButton") then
                         -- Shift + Left click: Unregister bot
                         partyBots:UnregisterBot(name)
+
                     elseif(arg1 == "RightButton") then
-                        -- Shift + Right click: Unregister bot
-                        partyBots:UnregisterBot(name)
+                        -- Shift + Right click: Stay/Unstay
+                        TargetByName(name, true)
+                        if partyBots.checkStaying(name) then    
+                            SendChatMessage(".partybot unstay", "SAY")
+                        else
+                            SendChatMessage(".partybot stay", "SAY")
+                        end
                     end
                 else
                     -- Target the bot
@@ -831,11 +872,6 @@ local function lvPartyBots()
             self.Bots[name].frame:Hide()
             self.Bots[name].frame:SetScript("OnClick", nil)
             self.Bots[name].frame = nil
-        end
-        if self.Bots[name].listFrame then
-            self.Bots[name].listFrame:Hide()
-            self.Bots[name].listFrame:SetScript("OnClick", nil)
-            self.Bots[name].listFrame = nil
         end
         
         -- Clean up any remaining references
