@@ -158,21 +158,8 @@ local function lvMinimapClock()
 	end
 
 	miniClock.sessionPlayed = function()
-		local startTime = LavenderVibes.Session
-		if not startTime then startTime = 0 end
-		local endTime = time()
-		local difference = endTime - startTime
-		local hours = math.floor(difference / 3600)
-		local mins = math.floor((difference - (hours * 3600)) / 60)
-		local seconds = difference - (hours * 3600) - (mins * 60)
-		local played = ""
-		if hours > 0 then
-			played = tostring(hours) .. "h " .. tostring(mins) .. "m "
-		else
-			played = tostring(mins) .. "m "
-		end
-		played = played .. tostring(seconds) .. "s"
-		return played
+		LavenderVibes.Session = time() - LavenderOptions.current_session_start
+		return LavenderVibes.Util.SecondsToString(LavenderVibes.Session)
 	end
 
 	miniClock.timerStart = time()

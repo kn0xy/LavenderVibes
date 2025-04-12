@@ -6,12 +6,18 @@ local function lvPartyBots()
     local partyBots = {
         Bots = {},
         LastPausedTime = {},
-        Encounters = {}
+        Encounters = {},
+        IsFirstLogin = true
     }
 
     -- Initialize baron button option
     if LavenderOptions._PartyBotsShowBaronButton == nil then
         LavenderOptions._PartyBotsShowBaronButton = false
+    end
+
+    -- Initialize login tracking
+    if LavenderOptions._PartyBotsLastSession == nil then
+        LavenderOptions._PartyBotsLastSession = 0
     end
 
     -- Initialize the main menu
@@ -25,10 +31,42 @@ local function lvPartyBots()
                 value = "BOT_CONTROLS",
                 menuList = {
                     {
+                        isTitle = true,
+                        text = "Bot Controls", 
+                        notCheckable = true,
+                    },
+                    {
                         text = "Pause All",
                         notCheckable = true,
                         func = function()                           
                             partyBots:PauseAllBots()
+                        end
+                    }
+                }
+            },
+            {
+                text = "Encounters",
+                hasArrow = true,
+                value = "ENCOUNTERS",
+                menuList = {
+                    {
+                        isTitle = true,
+                        text = "Encounters", 
+                        notCheckable = true,
+                    },
+                    {
+                        text = "Show Baron Button",
+                        keepShownOnClick = false,
+                        checked = LavenderOptions._PartyBotsShowBaronButton,
+                        func = function()
+                            if not this.checked then
+                                LavenderOptions._PartyBotsShowBaronButton = true
+                                partyBots.baronButton:Show()
+                            else
+                                LavenderOptions._PartyBotsShowBaronButton = false
+                                partyBots.baronButton:Hide() 
+                            end
+                            CloseDropDownMenus()
                         end
                     }
                 }
@@ -59,20 +97,7 @@ local function lvPartyBots()
                             end
                         end
                     },  
-                    {
-                        text = "Show Baron Button",
-                        keepShownOnClick = false,
-                        checked = LavenderOptions._PartyBotsShowBaronButton,
-                        func = function()
-                            if not this.checked then
-                                LavenderOptions._PartyBotsShowBaronButton = true
-                                partyBots.baronButton:Show()
-                            else
-                                LavenderOptions._PartyBotsShowBaronButton = false
-                                partyBots.baronButton:Hide() 
-                            end
-                        end
-                    }
+                    
                 }
             }
         }
@@ -215,7 +240,9 @@ local function lvPartyBots()
                 lv.Throttle.Add(".partybot cometome", "SAY")
             end)
         end)
-        partyBots.baronButton:Hide()
+        if not LavenderOptions._PartyBotsShowBaronButton then
+            partyBots.baronButton:Hide()
+        end
     end
 
 
@@ -304,13 +331,13 @@ local function lvPartyBots()
             texture:SetAlpha(0.8)
     
             button:SetScript("OnClick", function()
-                if IsShiftKeyDown() then
-                    -- Set CC marker    
-                    SendChatMessage(".partybot ccmark " .. button.marker, "SAY")
-                else
+                if arg1 == "LeftButton" then
                     -- Set Focus marker
                     SendChatMessage(".partybot focusmark " .. button.marker, "SAY")
-                end
+                else
+                    -- Set CC marker    
+                    SendChatMessage(".partybot ccmark " .. button.marker, "SAY")
+                end               
                 partyBots.targetOpFrame.elapsed = 0
                 partyBots.targetOpFrame:Show()
                 container:Hide()
@@ -834,6 +861,14 @@ local function lvPartyBots()
         return true
     end
 
+    -- Function to clear all registered bots
+    partyBots.ClearAllBots = function(self)
+        for botName, _ in pairs(self.Bots) do
+            self:UnregisterBot(botName)
+        end
+        LavenderPrint("Cleared all registered bots")
+    end
+
     -- Initialize module
     partyBots.Frame = initDaddyFrame()
     partyBots.currentView = "grid"
@@ -854,6 +889,7 @@ local function lvPartyBots()
     lv.Hooks.add_action("unload_module_PartyBots", function()
         -- Unregister events
         partyEventFrame:UnregisterAllEvents()
+        loginEventFrame:UnregisterAllEvents()
         
         -- Clean up target operation frame
         if partyBots.targetOpFrame then

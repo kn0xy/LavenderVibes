@@ -541,65 +541,6 @@ local function getBankCache(toon)
 end
 
 
--- time difference (move this to util)
-local function difftime(val)
-    local secs = time() - tonumber(val)
-    local result = {}
-	local years, months, weeks, days, hours, minutes = 0, 0, 0, 0, 0, 0
-
-
-    -- years
-    if secs >= 31540000 then 
-        years = math.floor(secs / 31540000)
-        secs = secs - (years * 31540000)
-        tinsert(result, years .. "y")
-    end
-
-    -- months
-    if secs >= 2628000 then
-        months = math.floor(secs / 2628000)
-        secs = secs - (months * 2628000)
-        tinsert(result, months .. "mo")
-    end
-
-    -- weeks
-    if secs >= 604800 then
-        weeks = math.floor(secs / 604800)
-        secs = secs - (weeks * 604800)
-        tinsert(result, weeks .. "w")
-    end
-
-    -- days
-    if secs >= 86400 then
-        days = math.floor(secs / 86400)
-        secs = secs - (days * 86400)
-        tinsert(result, days .. "d")
-    end
-
-    -- hours
-    if secs >= 3600 then
-        hours = math.floor(secs / 3600)
-        secs = secs - (hours * 3600)
-        tinsert(result, hours .. "h")
-    end
-
-    -- minutes
-    if secs >= 60 then
-        minutes = math.floor(secs / 60)
-        secs = secs - (minutes * 60)
-        tinsert(result, minutes .. (hours and "m" or " minute" .. (minutes > 1 and "s" or "")) )
-	else
-		tinsert(result, "Just now")
-    end
-
-    -- join results into a string
-    local output = table.concat(result, ", ")
-
-    return output .. (output ~= "Just now" and " ago" or "")
-end
-
-
-
 -- tooltip
 local function listStatsTooltip()
 	-- num items total
@@ -766,7 +707,7 @@ end
 
 local function getBagsCached(toon)
 	if LavenderInventory[toon].BagsCached then
-		return difftime(LavenderInventory[toon].BagsCached)
+		return LavenderVibes.Util.TimeSince(LavenderInventory[toon].BagsCached)
 	end
 
 	return false

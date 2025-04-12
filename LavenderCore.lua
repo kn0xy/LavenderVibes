@@ -1,5 +1,5 @@
 -- Define addon version
-local lavender_version = "0.1.2"
+local lavender_version = "0.3.1"
 
 -- Initialize internal hooks and actions system
 local function initHooks()
@@ -208,7 +208,7 @@ local function LavenderCommands(msg, editbox)
 
 		-- Display help text
 		helpCommand("config", "Show the options window.")
-		helpCommand("session", "Output the current session elapsed time in seconds.")
+		helpCommand("session", "Output the current session elapsed time.")
 		for hCmd,hTxt in pairs(LavenderVibes.Commands.helptext) do
 			helpCommand(hCmd, hTxt)
 			if(keyExists(LavenderVibes.Commands.has_subs, hCmd)) then
@@ -235,9 +235,8 @@ local function LavenderCommands(msg, editbox)
 	-- /lv session
     elseif cmd == "session" then
 		
-		local timeNow = time()
-		local elapsed = timeNow - LavenderVibes.Session
-		DEFAULT_CHAT_FRAME:AddMessage("Session Time: " .. tostring(elapsed) .. " seconds")
+		local sessionTime = LavenderVibes.Util.SecondsToString(LavenderVibes.Session)
+		LavenderPrint("Session Time: |r" .. sessionTime)
 
 	else 
 		local result = LavenderVibes.Commands.onEvent(cmd, args)
@@ -269,23 +268,47 @@ end
 LavenderVibes.Hooks.add_action("core_ready", loadModules)
 
 
+local function initSession()
+	local last_end = LavenderOptions.last_session_end or 0
+	local gap = time() - last_end
+	if(gap > 600) then
+		LavenderOptions.current_session_start = time()
+		LavenderPrint("New session started")
+	end
+	LavenderVibes.Session = time() - LavenderOptions.current_session_start
+end
+
+
 -- Fire once when player UI loads
-local function onLogin()
+local function handle_events()
 
-	-- Get available modules
-	LavenderVibes.Hooks.do_action("modules_available")
+	if(event == "VARIABLES_LOADED") then
+		LavenderPrint("Variables loaded")
+		lvpt(LavenderOptions)
+		
+	end
 
-	-- Initialize the configuration/options window
-	LavenderVibes.Config:Init()
-	
-	-- Start session
-	LavenderVibes.Session = time()
-	
-	-- Trigger the loading of enabled modules
-	LavenderVibes.Hooks.do_action("core_ready")
+	if(event == "PLAYER_LOGIN") then
+		
+		-- Get available modules
+		LavenderVibes.Hooks.do_action("modules_available")
+
+		-- Initialize the configuration/options window
+		LavenderVibes.Config:Init()
+		
+		-- Initialize session
+		initSession()
+		
+		-- Trigger the loading of enabled modules
+		LavenderVibes.Hooks.do_action("core_ready")
+
+	elseif(event == "PLAYER_LOGOUT") then
+		LavenderOptions.last_session_end = time()
+	end
 end
 
 
 -- Initialize MainFrame
 LavenderVibes.MainFrame:RegisterEvent("PLAYER_LOGIN");
-LavenderVibes.MainFrame:SetScript("OnEvent", onLogin)
+LavenderVibes.MainFrame:RegisterEvent("PLAYER_LOGOUT");
+LavenderVibes.MainFrame:SetScript("OnEvent", handle_events)
