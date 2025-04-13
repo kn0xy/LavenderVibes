@@ -512,7 +512,7 @@ end
 local function getBankCache(toon)
 	local bankCached = "Never"
 	local bc = LavenderInventory[toon].BankCached
-	if(bc > 0) then
+	if(bc and bc > 0) then
 		local function stripZero(str)
 			if(string.sub(str, 0, 1) == "0") then
 				str = string.sub(str, 1)
@@ -921,13 +921,16 @@ local function lvItemInventory()
 		end
 		
 		-- filter bank items
-		for b,bank in pairs(bankItems) do
-			local link = bank.itemLink
-			local quality = itemInventory.GetItemQualityFromLink(link)
-			if(itemInventory.Filters[quality] == true) then
-				tinsert(filteredBank, bank)
+		if bankItems then
+			for b,bank in pairs(bankItems) do
+				local link = bank.itemLink
+				local quality = itemInventory.GetItemQualityFromLink(link)
+				if(itemInventory.Filters[quality] == true) then
+					tinsert(filteredBank, bank)
+				end
 			end
 		end
+		
 		
 		-- enumerate item qualities for sorting
 		local itemQuality = {
