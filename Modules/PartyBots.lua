@@ -9,7 +9,8 @@ local function lvPartyBots()
         Encounters = {},
         IsFirstLogin = true,
         AttachedButtons = {},
-        AllPaused = false
+        AllPaused = false,
+        AllStaying = false
     }    
 
     -- Initialize the main menu
@@ -53,20 +54,6 @@ local function lvPartyBots()
                     --     notCheckable = true,
                     -- },
                     {
-                        text = "Show Baron Button",
-                        keepShownOnClick = true,
-                        checked = LavenderOptions._PartyBotsShowBaronButton,
-                        func = function()
-                            if not this.checked then
-                                LavenderOptions._PartyBotsShowBaronButton = true
-                                partyBots.baronButton:Show()
-                            else
-                                LavenderOptions._PartyBotsShowBaronButton = false
-                                partyBots.baronButton:Hide() 
-                            end
-                        end
-                    },
-                    {
                         text = "Show Pause All Button",
                         keepShownOnClick = true,
                         checked = LavenderOptions._PartyBotsShowPauseAllButton,
@@ -77,6 +64,20 @@ local function lvPartyBots()
                             else
                                 LavenderOptions._PartyBotsShowPauseAllButton = false
                                 partyBots.pauseAllButton:Hide() 
+                            end
+                        end
+                    },
+                    {
+                        text = "Show Stay All Button",
+                        keepShownOnClick = true,
+                        checked = LavenderOptions._PartyBotsShowStayAllButton,
+                        func = function()
+                            if not this.checked then
+                                LavenderOptions._PartyBotsShowStayAllButton = true
+                                partyBots.stayAllButton:Show()
+                            else
+                                LavenderOptions._PartyBotsShowStayAllButton = false
+                                partyBots.stayAllButton:Hide() 
                             end
                         end
                     }
@@ -212,45 +213,6 @@ local function lvPartyBots()
     end
 
 
-    -- Create Baron button
-    local function initBaronButton()
-        local frame = partyBots.Frame
-        local btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-        btn:SetWidth(100)
-        btn:SetHeight(20)
-        btn:SetText("Get Out!")
-        btn:SetScript("OnClick", function()
-            partyBots:targetPlayerByName("Catatonic")
-            lv.Throttle.Add(".partybot pause", "SAY")
-            lv.Throttle.Add(".partybot cometome", "SAY")
-            LavenderVibes.Util.SetTimeout(0.35, function()
-                partyBots:targetPlayerByName("Moonkorius")
-                lv.Throttle.Add(".partybot pause", "SAY")
-                lv.Throttle.Add(".partybot cometome", "SAY")
-            end)
-        end)
-
-        if LavenderOptions._PartyBotsShowBaronButton == nil then
-            LavenderOptions._PartyBotsShowBaronButton = false
-        end
-
-        if not LavenderOptions._PartyBotsShowBaronButton then
-            btn:Hide()
-        else
-            partyBots:attachButton(btn)
-        end
-
-        -- Set show/hide scripts to manage attachment
-        btn:SetScript("OnShow", function()
-            partyBots:attachButton(btn)
-        end)
-        btn:SetScript("OnHide", function()
-            partyBots:detachButton(btn)
-        end)
-
-        partyBots.baronButton = btn
-    end
-
     local function initPauseAllButton()
         -- Create Pause All button
         local frame = partyBots.Frame
@@ -275,10 +237,34 @@ local function lvPartyBots()
         partyBots.pauseAllButton = btn
     end
 
-    -- Initialize encounters
-    local function initEncounters()
-        initBaronButton()
+    local function initStayAllButton()
+        -- Create Stay All button
+        local frame = partyBots.Frame
+        local btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        btn:SetWidth(100)
+        btn:SetHeight(20)
+        btn:SetText(partyBots.AllStaying and "Unstay All" or "Stay All")
+        btn:SetScript("OnClick", function()
+            partyBots:StayAllBots()
+        end)
+
+        if not LavenderOptions._PartyBotsShowStayAllButton then
+            btn:Hide()
+        else
+            partyBots:attachButton(btn)
+        end
+
+        -- Set show/hide scripts to manage attachment
+        btn:SetScript("OnShow", function() partyBots:attachButton(btn) end)
+        btn:SetScript("OnHide", function() partyBots:detachButton(btn) end)
+
+        partyBots.stayAllButton = btn
+    end
+
+    -- Initialize actions
+    local function initActions()
         initPauseAllButton()
+        initStayAllButton()
     end
 
     -- Function to add button to attached buttons
@@ -461,6 +447,27 @@ local function lvPartyBots()
                 -- all bots were unpaused
                 partyBots.LastPausedTime = {}
                 partyBots:updatePauseAllButton()
+                return
+            end
+
+            -- Check for stay all messages
+            pattern = "all party bots will stay in position"
+            if string.find(string.lower(message), string.lower(pattern)) then
+                -- all bots will stay
+                for botName, _ in pairs(partyBots.Bots) do
+                    partyBots.Bots[botName].staying = true
+                end
+                partyBots:updateStayAllButton()
+                return
+            end
+
+            pattern = "all party bots are free to move"
+            if string.find(string.lower(message), string.lower(pattern)) then
+                -- all bots are free to move
+                for botName, _ in pairs(partyBots.Bots) do
+                    partyBots.Bots[botName].staying = false
+                end
+                partyBots:updateStayAllButton()
                 return
             end
             
@@ -1055,13 +1062,33 @@ local function lvPartyBots()
         end
     end
 
+    -- Update stay all button text
+    partyBots.updateStayAllButton = function()
+        if not partyBots.stayAllButton then return end
+        if partyBots.AllStaying then
+            partyBots.stayAllButton:SetText("Unstay All")
+            partyBots.AllStaying = false
+        else
+            partyBots.stayAllButton:SetText("Stay All")
+            partyBots.AllStaying = true
+        end
+    end
+
+    function partyBots.StayAllBots()
+        if partyBots.AllStaying then
+            SendChatMessage(".partybot unstay all", "SAY")
+        else
+            SendChatMessage(".partybot stay all", "SAY")
+        end
+    end
+
     -- Initialize module
     partyBots.Frame = initDaddyFrame()
     partyBots.currentView = "grid"
     partyBots.registerSlashCommands()
     partyBots.MarkerMenu = CreateMarkerMenu()
     initEventHandlers()
-    initEncounters()
+    initActions()
     lv.Modules.PartyBots = partyBots
 
     -- Hook to hide the window

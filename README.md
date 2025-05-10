@@ -32,17 +32,19 @@ Easily control party bots by clicking instead of manually targeting and typing c
 <br>
 
 ## Changelog
-**Latest Version**: 0.3.2  
-**Last Updated**: 4/12/2025
+**Latest Version**: 0.3.3  
+**Last Updated**: 5/9/2025
 
-| Date       | Old  | New  | Module      | Description                        |
-|------------|------|------|-------------|------------------------------------|
-| 12/14/2024 | 0.1.0| 0.1.1| Inventory   | Added "Sort By" dropdown           |
-| 12/15/2024 | 0.1.1| 0.1.2| Inventory   | Added "Last Updated" text          |
-|            |      |      | Config      | Added tooltips to submenu options  |
-| 12/31/2024 | 0.1.1| 0.2.0| Tradeskills | Beta implementation                |
-| 02/02/2025 | 0.2.0| 0.2.1| Top Panel   | Added Money widget                 |
-| 04/10/2025 | 0.2.1| 0.3.0| PartyBots   | Added PartyBots module             |
-| 04/11/2025 | 0.3.0| 0.3.1| Core        | Improved session persistence       |
-|            |      |      | PartyBots   | Added stay/unstay controls         |
-| 04/12/2025 | 0.3.1| 0.3.2| PartyBots   | Added pause/unpause all button     |
+| Date       | Old  | New  | Module        | Description                        |
+|------------|------|------|-------------  |------------------------------------|
+| 12/14/2024 | 0.1.0| 0.1.1| Inventory     | Added "Sort By" dropdown           |
+| 12/15/2024 | 0.1.1| 0.1.2| Inventory     | Added "Last Updated" text          |
+|            |      |      | Config        | Added tooltips to submenu options  |
+| 12/31/2024 | 0.1.1| 0.2.0| Tradeskills   | Beta implementation                |
+| 02/02/2025 | 0.2.0| 0.2.1| Top Panel     | Added Money widget                 |
+| 04/10/2025 | 0.2.1| 0.3.0| PartyBots     | Added PartyBots module             |
+| 04/11/2025 | 0.3.0| 0.3.1| Core          | Improved session persistence       |
+|            |      |      | PartyBots     | Added stay/unstay controls         |
+| 04/12/2025 | 0.3.1| 0.3.2| PartyBots     | Added pause/unpause all button     |
+| 05/09/2025 | 0.3.2| 0.3.3| Core          | Bug fixes & improvements           |
+|            |      |      | PartyBots     | - Replaced **Baron button** with **Stay All** button<br>- Added to the Lavender Modules config panel (enable/disable module)
