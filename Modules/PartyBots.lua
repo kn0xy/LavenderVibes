@@ -305,11 +305,12 @@ local function lvPartyBots()
         local lastButton = nil
         for _, button in ipairs(partyBots.AttachedButtons) do
             if button:IsShown() then
-                if lastButton then
-                    button:SetPoint("TOP", lastButton, "BOTTOM", 0, -5)
+                if lastButton and lastButton ~= button then
+                    button:SetPoint("TOP", lastButton, "BOTTOM", 0, -2)    
                 else
                     button:SetPoint("TOP", partyBots.Frame, "BOTTOM", 0, -2)
                 end
+        
                 lastButton = button
             end
         end
@@ -1073,12 +1074,12 @@ local function lvPartyBots()
     -- Hook to unload the module
     lv.Hooks.add_action("unload_module_PartyBots", function()
         -- Unregister events
-        partyEventFrame:UnregisterAllEvents()
-        loginEventFrame:UnregisterAllEvents()
+        partyBots.partyEventFrame:UnregisterAllEvents()
         
         -- Clean up target operation frame
         if partyBots.targetOpFrame then
             partyBots.targetOpFrame:Hide()
+            partyBots.targetOpFrame:UnregisterAllEvents()
             partyBots.targetOpFrame:SetScript("OnUpdate", nil)
             partyBots.targetOpFrame = nil
         end
@@ -1090,6 +1091,10 @@ local function lvPartyBots()
         if partyBots.Frame then
             partyBots.Frame:Hide()
         end
+
+        LavenderOptions["module_PartyBots_enabled"] = false
+
+        LavenderPrint("Lavender Vibes: PartyBots module unloaded.")
     end)
 end
 

@@ -1,5 +1,5 @@
 -- Define addon version
-local lavender_version = "0.3.2"
+local lavender_version = "0.3.3"
 
 -- Initialize internal hooks and actions system
 local function initHooks()
@@ -97,6 +97,12 @@ local function initCommands()
 			return true
 		end
 		return false
+	end
+
+	commands.Remove = function(cmd)
+		commands.commands[cmd] = nil
+		commands.helptext[cmd] = nil
+		commands.has_subs[cmd] = nil
 	end
 
 	return commands
@@ -259,6 +265,9 @@ SlashCmdList["LAVENDER"] = LavenderCommands
 local function loadModules()
 	for _, module in ipairs(LavenderVibes.Modules) do
 		local enabled = LavenderOptions["module_"..module.."_enabled"]
+		if(enabled == nil) then
+			LavenderOptions["module_"..module.."_enabled"] = false
+		end
 		if(enabled == true) then
 			LavenderVibes.Hooks.do_action("load_module_" .. module)
 		end

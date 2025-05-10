@@ -212,9 +212,10 @@ local function initPanelConfig()
 			end,
 			function(cb)
 				-- on click
-				local tf = "false"
-				if cb:GetChecked() then tf = "true" end
-				LavenderPrint("Clicked " .. cb:GetName() .. ": " .. tf)
+				local _, endPos = string.find(cb:GetName(), "LavenderPanelWidget")
+				local widgetName = string.sub(cb:GetName(), endPos + 1, -12)
+                local widgetOpt = "widget_" .. widgetName .. "_active"
+				LavenderOptions.Panel[widgetOpt] = cb:GetChecked()
 			end
 		));
 	end

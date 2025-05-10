@@ -4,7 +4,8 @@ local LavenderConfigOptions = {
 	["MinimapClock"]  = "Minimap Clock/Timer",
 	["Inventory"]	  = "Account Inventory",
 	["Panel"] 		  = "Top Info Panel",
-	["Tradeskills"]   = "Account Tradeskills"
+	["Tradeskills"]   = "Account Tradeskills",
+	["PartyBots"]	  = "Party Bots"
 }
 
 
@@ -12,7 +13,7 @@ local LavenderConfigOptions = {
 local function initConfigWindow()
 	local configFrame = CreateFrame("Frame", "LavenderConfigFrame", UIParent)
 	configFrame:SetWidth(270)
-	configFrame:SetHeight(300)
+	configFrame:SetHeight(330)
 	configFrame:SetPoint("CENTER", UIParent, "CENTER")
 	configFrame:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
