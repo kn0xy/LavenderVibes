@@ -47,4 +47,5 @@ Easily control party bots by clicking instead of manually targeting and typing c
 |            |      |      | PartyBots     | Added stay/unstay controls         |
 | 04/12/2025 | 0.3.1| 0.3.2| PartyBots     | Added pause/unpause all button     |
 | 05/09/2025 | 0.3.2| 0.3.3| Core          | Bug fixes & improvements           |
-|            |      |      | PartyBots     | - Replaced **Baron button** with **Stay All** button<br>- Added to the Lavender Modules config panel (enable/disable module)
+|            |      |      | PartyBots     | - Replaced **Baron button** with **Stay All** button<br>- Added to the Lavender Modules config panel (enable/disable module) |
+| 11/23/2025 | 0.3.3| 0.3.4| Core          | Improved default modules options for new installs |

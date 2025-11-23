@@ -116,6 +116,17 @@ local function lvMinimapButton()
 				LavenderVibes.Modules.Tradeskills:Show()
 			end
 			UIDropDownMenu_AddButton(info)
+
+			-- Inventory option
+			info.text = "Inventory"
+			info.isTitle = false
+			info.notClickable = false
+			info.notCheckable = true
+			info.disabled = false
+			info.func = function()
+				LavenderVibes.Modules.Inventory:Show()
+			end
+			UIDropDownMenu_AddButton(info)
 			
 			-- Config option
 			info.text = "Config"
@@ -243,9 +254,13 @@ local function initMinimapButtonConfig()
 	)
 
 	-- Left Click Action dropdown
+	local leftClickLabel = configFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	leftClickLabel:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	leftClickLabel:SetPoint("TOPLEFT", showTooltip, "BOTTOMLEFT", 5, -20)
+	leftClickLabel:SetText("Left Click Action")
 	local leftClickDropdown = CreateFrame("Frame", "LavenderMinimapButtonLeftClickDropdown", configFrame, "UIDropDownMenuTemplate")
-	leftClickDropdown:SetPoint("TOPLEFT", showTooltip, "BOTTOMLEFT", 0, -10)
-	UIDropDownMenu_SetWidth(120, leftClickDropdown)
+	leftClickDropdown:SetPoint("TOPLEFT", leftClickLabel, "TOPRIGHT", 0, 8)
+	UIDropDownMenu_SetWidth(100, leftClickDropdown)
 	UIDropDownMenu_SetText(LavenderOptions.MinimapButton.leftClickAction == "config" and "Open Config" or "Open Tradeskills", leftClickDropdown)
 
 	-- Create button for left click dropdown
@@ -274,9 +289,13 @@ local function initMinimapButtonConfig()
 	end)
 
 	-- Right Click Action dropdown
+	local rightClickLabel = configFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	rightClickLabel:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	rightClickLabel:SetPoint("TOPLEFT", leftClickLabel, "BOTTOMLEFT", 0, -25)
+	rightClickLabel:SetText("Right Click Action")
 	local rightClickDropdown = CreateFrame("Frame", "LavenderMinimapButtonRightClickDropdown", configFrame, "UIDropDownMenuTemplate")
-	rightClickDropdown:SetPoint("TOPLEFT", leftClickDropdown, "BOTTOMLEFT", 0, -10)
-	UIDropDownMenu_SetWidth(120, rightClickDropdown)
+	rightClickDropdown:SetPoint("TOPLEFT", rightClickLabel, "TOPRIGHT", -7, 8)
+	UIDropDownMenu_SetWidth(100, rightClickDropdown)
 	UIDropDownMenu_SetText(LavenderOptions.MinimapButton.rightClickAction == "menu" and "Show Menu" or "Open Tradeskills", rightClickDropdown)
 
 	-- Create button for right click dropdown

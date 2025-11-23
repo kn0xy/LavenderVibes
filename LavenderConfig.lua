@@ -47,7 +47,7 @@ local function initConfigWindow()
 	-- Details Frame
 	local detailsFrame = CreateFrame("Frame", "LAVENDERdetailsFrame", configFrame)
 	detailsFrame:SetWidth(250)
-	detailsFrame:SetHeight(200)
+	detailsFrame:SetHeight(225)
 	detailsFrame:SetPoint("TOPRIGHT", configFrame, "TOPRIGHT", -20, -38)
 	detailsFrame:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -65,7 +65,6 @@ local function initConfigWindow()
 	-- Handle frame shown
 	configFrame.Options = {};
 	configFrame.LoadOptions = function()
-		LavenderVibes.Util:HideAll()
 		for k,v in LavenderOptions do
 			if(string.sub(k, 1, 1) ~= "_") then
 				--DEFAULT_CHAT_FRAME:AddMessage("k = " .. tostring(k) .. " and v = " .. tostring(v));
@@ -206,15 +205,12 @@ function LavenderVibes.Config:ShowDetails(selected)
 	local frame = LavenderVibes.Config
 	local btns = frame.DetailsButtons
 	
-	-- Hide any previously shown details first
-	if frame.Details:IsShown() then
-		-- Hide any existing details frame
-		for _, child in ipairs({frame.Details:GetChildren()}) do
-			if child:IsShown() then
-				child:Hide()
-				child:SetParent(nil)  -- Remove parent relationship
-			end
-		end
+	-- Clear any previously shown details first
+	-- Always clear children, regardless of whether Details frame is shown
+	local children = {frame.Details:GetChildren()}
+	for _, child in ipairs(children) do
+		child:Hide()
+		child:SetParent(nil)  -- Remove parent relationship
 	end
 	
 	for b,btn in ipairs(btns) do
@@ -272,7 +268,7 @@ end
 -- Function to create a checkbox option for the details window
 function LavenderVibes.Config:DetailsCbOption(frame, pos, name, label, checked, ttFunc, cbFunc)
 	local x = 10
-	local y = (-32 * (pos - 1)) - 25
+	local y = (-32 * (pos - 1)) - 35
 	local cbName = name .. "CheckButton"
 	local checkbox = CreateFrame("CheckButton", cbName, frame, "UICheckButtonTemplate")
 	checkbox:SetWidth(20)

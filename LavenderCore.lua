@@ -1,5 +1,5 @@
 -- Define addon version
-local lavender_version = "0.3.3"
+local lavender_version = "0.3.4"
 
 -- Initialize internal hooks and actions system
 local function initHooks()
@@ -165,7 +165,12 @@ end
 -- Initialize Options
 if(LavenderOptions == nil) then
 	LavenderOptions = {
-		module_MinimapButton_enabled = true
+		module_MinimapButton_enabled = true,
+		module_MinimapClock_enabled = true,
+		module_Inventory_enabled = true,
+		module_Panel_enabled = true,
+		module_Tradeskills_enabled = true,
+		module_PartyBots_enabled = true
 	}
 end
 

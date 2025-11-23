@@ -216,6 +216,11 @@ local function initPanelConfig()
 				local widgetName = string.sub(cb:GetName(), endPos + 1, -12)
                 local widgetOpt = "widget_" .. widgetName .. "_active"
 				LavenderOptions.Panel[widgetOpt] = cb:GetChecked()
+                if LavenderOptions.Panel[widgetOpt] then
+                    panel.Widgets:Activate(widgetName)
+                else
+                    panel.Widgets:Deactivate(widgetName)
+                end
 			end
 		));
 	end
