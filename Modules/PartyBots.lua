@@ -270,6 +270,12 @@ local function lvPartyBots()
     -- Function to add button to attached buttons
     function partyBots.attachButton(self, button)
         if self and not button then button = self end
+        for _, attached in ipairs(partyBots.AttachedButtons) do
+            if attached == button then
+                partyBots:updateButtonPositions()
+                return
+            end
+        end
         table.insert(partyBots.AttachedButtons, button)
         partyBots:updateButtonPositions()
     end
@@ -277,10 +283,12 @@ local function lvPartyBots()
     -- Function to remove button from attached buttons
     function partyBots.detachButton(self, button)
         if self and not button then button = self end
-        for i, attachedButton in ipairs(partyBots.AttachedButtons) do
-            if attachedButton == button then
+        local i = 1
+        while i <= table.getn(partyBots.AttachedButtons) do
+            if partyBots.AttachedButtons[i] == button then
                 table.remove(partyBots.AttachedButtons, i)
-                break
+            else
+                i = i + 1
             end
         end
         partyBots:updateButtonPositions()
@@ -291,12 +299,13 @@ local function lvPartyBots()
         local lastButton = nil
         for _, button in ipairs(partyBots.AttachedButtons) do
             if button:IsShown() then
+                button:ClearAllPoints()
                 if lastButton and lastButton ~= button then
-                    button:SetPoint("TOP", lastButton, "BOTTOM", 0, -2)    
+                    button:SetPoint("TOP", lastButton, "BOTTOM", 0, -2)
                 else
                     button:SetPoint("TOP", partyBots.Frame, "BOTTOM", 0, -2)
                 end
-        
+
                 lastButton = button
             end
         end

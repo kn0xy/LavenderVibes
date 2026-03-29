@@ -14,5 +14,6 @@ Modules\MinimapClock.lua
 Modules\Panel.lua
 Modules\Panel\Bags.lua
 Modules\Panel\Money.lua
+Modules\Panel\Coords.lua
 Modules\PartyBots.lua
 Modules\Tradeskills.lua

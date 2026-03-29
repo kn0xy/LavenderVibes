@@ -1,5 +1,5 @@
 -- Define addon version
-local lavender_version = "0.3.4"
+local lavender_version = "0.4.0"
 
 -- Initialize internal hooks and actions system
 local function initHooks()

@@ -107,27 +107,44 @@ local function lvMinimapButton()
 			UIDropDownMenu_AddButton(info)
 			
 			-- Tradeskills option
-			info.text = "Tradeskills"
-			info.isTitle = false
-			info.notClickable = false
-			info.notCheckable = true
-			info.disabled = false
-			info.func = function()
-				LavenderVibes.Modules.Tradeskills:Show()
+			if LavenderOptions.module_Tradeskills_enabled then
+				info.text = "Tradeskills"
+				info.isTitle = false
+				info.notClickable = false
+				info.notCheckable = true
+				info.disabled = false
+				info.func = function()
+					LavenderVibes.Modules.Tradeskills:Show()
+				end
+				UIDropDownMenu_AddButton(info)
 			end
-			UIDropDownMenu_AddButton(info)
 
 			-- Inventory option
-			info.text = "Inventory"
-			info.isTitle = false
-			info.notClickable = false
-			info.notCheckable = true
-			info.disabled = false
-			info.func = function()
-				LavenderVibes.Modules.Inventory:Show()
+			if LavenderOptions.module_Inventory_enabled then
+				info.text = "Inventory"
+				info.isTitle = false
+				info.notClickable = false
+				info.notCheckable = true
+				info.disabled = false
+				info.func = function()
+					LavenderVibes.Modules.Inventory:Show()
+				end
+				UIDropDownMenu_AddButton(info)
 			end
-			UIDropDownMenu_AddButton(info)
-			
+
+			-- PartyBots option
+			if LavenderOptions.module_PartyBots_enabled then
+				info.text = "Party Bots"
+				info.isTitle = false
+				info.notClickable = false
+				info.notCheckable = true
+				info.disabled = false
+				info.func = function()
+					LavenderVibes.Modules.PartyBots:Show()
+				end
+				UIDropDownMenu_AddButton(info)
+			end
+
 			-- Config option
 			info.text = "Config"
 			info.isTitle = false
@@ -277,15 +294,21 @@ local function initMinimapButtonConfig()
 			LavenderOptions.MinimapButton.leftClickAction = value
 			UIDropDownMenu_SetText(value == "config" and "Open Config" or "Open Tradeskills", leftClickDropdown)
 		end
+		
+		-- Open Config option
 		info.text = "Open Config"
 		info.value = "config"
 		info.notCheckable = false
 		info.checked = LavenderOptions.MinimapButton.leftClickAction == "config"
 		UIDropDownMenu_AddButton(info)
-		info.text = "Open Tradeskills"
-		info.value = "tradeskills"
-		info.checked = LavenderOptions.MinimapButton.leftClickAction == "tradeskills"
-		UIDropDownMenu_AddButton(info)
+
+		-- Tradeskills option
+		if LavenderOptions.module_Tradeskills_enabled then
+			info.text = "Open Tradeskills"
+			info.value = "tradeskills"
+			info.checked = LavenderOptions.MinimapButton.leftClickAction == "tradeskills"
+			UIDropDownMenu_AddButton(info)
+		end
 	end)
 
 	-- Right Click Action dropdown
@@ -312,15 +335,21 @@ local function initMinimapButtonConfig()
 			LavenderOptions.MinimapButton.rightClickAction = value
 			UIDropDownMenu_SetText(value == "menu" and "Show Menu" or "Open Tradeskills", rightClickDropdown)
 		end
+		
+		-- Show Menu option
 		info.text = "Show Menu"
 		info.value = "menu"
 		info.notCheckable = false
 		info.checked = LavenderOptions.MinimapButton.rightClickAction == "menu"
 		UIDropDownMenu_AddButton(info)
-		info.text = "Open Tradeskills"
-		info.value = "tradeskills"
-		info.checked = LavenderOptions.MinimapButton.rightClickAction == "tradeskills"
-		UIDropDownMenu_AddButton(info)
+
+		-- Tradeskills option
+		if LavenderOptions.module_Tradeskills_enabled then
+			info.text = "Open Tradeskills"
+			info.value = "tradeskills"
+			info.checked = LavenderOptions.MinimapButton.rightClickAction == "tradeskills"
+			UIDropDownMenu_AddButton(info)
+		end
 	end)
 
 	configFrame.Options = {showBorder, showIcon, showTooltip, leftClickDropdown, rightClickDropdown}

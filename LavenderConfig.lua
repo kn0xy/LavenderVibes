@@ -138,8 +138,7 @@ local function cbOption(pos, name, label, checked)
 		if checked then
 			LavenderVibes.Hooks.do_action("load_module_"..name)
 		else
-			LavenderVibes.Hooks.do_action("unload_module_"..name)
-			
+			LavenderVibes.Hooks.do_action("unload_module_"..name)			
 		end
 	end)
 	LavenderVibes.Config.Options[key] = checkbox

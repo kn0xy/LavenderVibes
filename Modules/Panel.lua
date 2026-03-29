@@ -274,6 +274,8 @@ local function lvPanel()
 		
 		-- * remove hooks
 
+        -- * remove widgets
+
 		-- hide frames
 		panel:Hide()
 	end)

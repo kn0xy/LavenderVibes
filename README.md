@@ -41,7 +41,7 @@ Easily control party bots by clicking instead of manually targeting and typing c
 | 12/15/2024 | 0.1.1| 0.1.2| Inventory     | Added "Last Updated" text          |
 |            |      |      | Config        | Added tooltips to submenu options  |
 | 12/31/2024 | 0.1.1| 0.2.0| Tradeskills   | Beta implementation                |
-| 02/02/2025 | 0.2.0| 0.2.1| Top Panel     | Added Money widget                 |
+| 02/02/2025 | 0.2.0| 0.2.1| Top Panel     | Added Money widget to the Top Panel|
 | 04/10/2025 | 0.2.1| 0.3.0| PartyBots     | Added PartyBots module             |
 | 04/11/2025 | 0.3.0| 0.3.1| Core          | Improved session persistence       |
 |            |      |      | PartyBots     | Added stay/unstay controls         |
@@ -49,3 +49,4 @@ Easily control party bots by clicking instead of manually targeting and typing c
 | 05/09/2025 | 0.3.2| 0.3.3| Core          | Bug fixes & improvements           |
 |            |      |      | PartyBots     | - Replaced **Baron button** with **Stay All** button<br>- Added to the Lavender Modules config panel (enable/disable module) |
 | 11/23/2025 | 0.3.3| 0.3.4| Core          | Improved default modules options for new installs |
+| 03/28/2026 | 0.3.4| 0.4.0| MapCoords     | Added MapCoords widget to the Top Panel |
