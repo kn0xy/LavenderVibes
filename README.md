@@ -32,8 +32,8 @@ Easily control party bots by clicking instead of manually targeting and typing c
 <br>
 
 ## Changelog
-**Latest Version**: 0.3.3  
-**Last Updated**: 5/9/2025
+**Latest Version**: 0.4.0  
+**Last Updated**: 3/28/2026
 
 | Date       | Old  | New  | Module        | Description                        |
 |------------|------|------|-------------  |------------------------------------|
